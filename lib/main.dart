@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 import 'services/api_service.dart';
-import 'services/ai_service.dart';
-import 'services/bet_service.dart';
-import 'screens/bet_slip_sidebar.dart';
+import 'screens/history_page.dart';
+import 'screens/dashboard_page.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
-
+void main() {
   runApp(const MyApp());
 }
 
@@ -18,10 +12,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark(),
-      home: const HomePage(),
+      home: HomePage(),
     );
   }
 }
@@ -34,85 +27,118 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final api = ApiService();
-  final ai = AiService();
-  final bet = BetService();
-
   List matches = [];
-  bool loading = true;
+  List betSlip = [];
+  double stake = 100;
+  double balance = 0;
 
   @override
   void initState() {
     super.initState();
-    load();
+    loadMatches();
+    loadBalance();
   }
 
-  void load() async {
-    final data = await api.fetchMatches();
+  Future<void> loadMatches() async {
+    final data = await ApiService.getMatches();
+    setState(() => matches = data);
+  }
+
+  Future<void> loadBalance() async {
+    final b = await ApiService.getBalance();
+    setState(() => balance = b);
+  }
+
+  void addToBetSlip(Map m) {
+    setState(() => betSlip.add(m));
+  }
+
+  double getTotalOdds() {
+    double total = 1;
+    for (var b in betSlip) {
+      total *= (b['odd'] ?? 1).toDouble();
+    }
+    return total;
+  }
+
+  Future<void> placeBet() async {
+    final result = await ApiService.placeBet(betSlip, stake);
+
     setState(() {
-      matches = data;
-      loading = false;
+      balance = result['balance'];
+      betSlip.clear();
     });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(result['win'] ? "WIN 🎉" : "LOSS ❌"),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    if (loading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Betwise AI"),
+        actions: [
+          Center(child: Text("💰 ${balance.toStringAsFixed(2)}")),
+          IconButton(
+            icon: const Icon(Icons.history),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const HistoryPage()),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.bar_chart),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const DashboardPage()),
+            ),
+          ),
+        ],
+      ),
       body: Row(
         children: [
-          /// MAIN CONTENT
           Expanded(
             child: ListView.builder(
-              padding: const EdgeInsets.all(10),
               itemCount: matches.length,
-              itemBuilder: (_, i) {
+              itemBuilder: (context, i) {
                 final m = matches[i];
-
-                final home = m['teams']?['home']?['name'] ?? "Home";
-                final away = m['teams']?['away']?['name'] ?? "Away";
-                final id = m['fixture']?['id'] ?? 0;
-
-                final aiResult = ai.predict();
-
-                return Card(
-                  child: ListTile(
-                    title: Text("$home vs $away"),
-
-                    subtitle: Text(
-                        "AI: ${aiResult['prediction']}"),
-
-                    trailing: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text("H ${(aiResult['home'] * 100).toStringAsFixed(0)}%"),
-                        Text("D ${(aiResult['draw'] * 100).toStringAsFixed(0)}%"),
-                        Text("A ${(aiResult['away'] * 100).toStringAsFixed(0)}%"),
-                      ],
-                    ),
-
-                    onTap: () {
-                      bet.add({
-                        "team": home,
-                        "type": "Home Win",
-                        "odd": 2.0,
-                      });
-
-                      setState(() {});
-                    },
-                  ),
+                return ListTile(
+                  title: Text("${m['home']} vs ${m['away']}"),
+                  subtitle: Text(
+                      "${m['prediction']} (${m['confidence']}%)"),
+                  trailing: Text("${m['odd']}"),
+                  onTap: () => addToBetSlip(m),
                 );
               },
             ),
           ),
-
-          /// BET SLIP
-          const BetSlipSidebar(),
+          Container(
+            width: 300,
+            color: Colors.black,
+            child: Column(
+              children: [
+                const Text("Bet Slip"),
+                Expanded(
+                  child: ListView(
+                    children: betSlip.map((b) => ListTile(
+                      title: Text("${b['home']} vs ${b['away']}"),
+                      trailing: Text("${b['odd']}"),
+                    )).toList(),
+                  ),
+                ),
+                Text("Odds: ${getTotalOdds().toStringAsFixed(2)}"),
+                Text("Payout: ${(getTotalOdds()*stake).toStringAsFixed(2)}"),
+                ElevatedButton(
+                  onPressed: placeBet,
+                  child: const Text("Place Bet"),
+                )
+              ],
+            ),
+          )
         ],
       ),
     );

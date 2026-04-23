@@ -1,45 +1,87 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiService {
-  Future<List<dynamic>> fetchMatches() async {
-    try {
-      final apiKey = dotenv.env['API_KEY'];
-      final baseUrl = dotenv.env['BASE_URL'];
+  /// 🌐 YOUR LIVE BACKEND (Render)
+  static const String baseUrl = "https://betwise-ai.onrender.com";
 
-      final res = await http.get(
-        Uri.parse("$baseUrl/fixtures?next=20"),
-        headers: {'x-apisports-key': apiKey!},
-      );
+  /// 👤 USER ID (set after login)
+  static int userId = 1;
 
-      final data = json.decode(res.body);
-      return data['response'] ?? [];
-    } catch (e) {
-      print("MATCH ERROR: $e");
-      return [];
-    }
+  /// ============================
+  /// 🔐 LOGIN / REGISTER
+  /// ============================
+  static Future<void> login(String email) async {
+    final res = await http.post(
+      Uri.parse("$baseUrl/login"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"email": email}),
+    );
+
+    final data = jsonDecode(res.body);
+    userId = data["id"];
   }
 
-  /// 👉 SAFE ODDS FETCH
-  Future<Map<String, dynamic>?> fetchOdds(int fixtureId) async {
-    try {
-      final apiKey = dotenv.env['API_KEY'];
-      final baseUrl = dotenv.env['BASE_URL'];
+  /// ============================
+  /// ⚽ GET MATCHES (AI)
+  /// ============================
+  static Future<List<dynamic>> getMatches() async {
+    final res = await http
+        .get(Uri.parse("$baseUrl/matches"))
+        .timeout(const Duration(seconds: 30));
 
-      final res = await http.get(
-        Uri.parse("$baseUrl/odds?fixture=$fixtureId"),
-        headers: {'x-apisports-key': apiKey!},
-      );
+    return jsonDecode(res.body);
+  }
 
-      final data = json.decode(res.body);
+  /// ============================
+  /// 💰 GET BALANCE
+  /// ============================
+  static Future<double> getBalance() async {
+    final res = await http.get(
+      Uri.parse("$baseUrl/balance/$userId"),
+    );
 
-      if (data['response'].isEmpty) return null;
+    final data = jsonDecode(res.body);
+    return (data["balance"] ?? 0).toDouble();
+  }
 
-      return data['response'][0];
-    } catch (e) {
-      print("ODDS ERROR: $e");
-      return null;
-    }
+  /// ============================
+  /// 🎯 PLACE BET
+  /// ============================
+  static Future<Map<String, dynamic>> placeBet(
+      List bets, double stake) async {
+    final res = await http.post(
+      Uri.parse("$baseUrl/bet"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        "userId": userId,
+        "bets": bets,
+        "stake": stake,
+      }),
+    );
+
+    return jsonDecode(res.body);
+  }
+
+  /// ============================
+  /// 📜 GET HISTORY
+  /// ============================
+  static Future<List<dynamic>> getHistory() async {
+    final res = await http.get(
+      Uri.parse("$baseUrl/history/$userId"),
+    );
+
+    return jsonDecode(res.body);
+  }
+
+  /// ============================
+  /// 📊 GET STATS (FIXED ERROR)
+  /// ============================
+  static Future<Map<String, dynamic>> getStats() async {
+    final res = await http.get(
+      Uri.parse("$baseUrl/stats/$userId"),
+    );
+
+    return jsonDecode(res.body);
   }
 }

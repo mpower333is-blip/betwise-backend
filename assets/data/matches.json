@@ -1,0 +1,20 @@
+[
+  {
+    "home": "Arsenal",
+    "away": "Chelsea",
+    "date": "2026-04-25",
+    "prediction": "Arsenal Win"
+  },
+  {
+    "home": "Barcelona",
+    "away": "Real Madrid",
+    "date": "2026-04-26",
+    "prediction": "Draw"
+  },
+  {
+    "home": "PSG",
+    "away": "Bayern Munich",
+    "date": "2026-04-27",
+    "prediction": "Bayern Win"
+  }
+]

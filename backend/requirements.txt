@@ -1,0 +1,8 @@
+Flask
+requests
+pandas
+numpy
+gunicorn
+python-dotenv
+sqlalchemy
+pymysql

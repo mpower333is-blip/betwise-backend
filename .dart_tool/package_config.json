@@ -32,12 +32,6 @@
       "languageVersion": "3.4"
     },
     {
-      "name": "crypto",
-      "rootUri": "file:///C:/Users/Mpower/AppData/Local/Pub/Cache/hosted/pub.dev/crypto-3.0.7",
-      "packageUri": "lib/",
-      "languageVersion": "3.4"
-    },
-    {
       "name": "cupertino_icons",
       "rootUri": "file:///C:/Users/Mpower/AppData/Local/Pub/Cache/hosted/pub.dev/cupertino_icons-1.0.9",
       "packageUri": "lib/",
@@ -56,12 +50,6 @@
       "languageVersion": "3.9"
     },
     {
-      "name": "flutter_dotenv",
-      "rootUri": "file:///C:/Users/Mpower/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_dotenv-5.2.1",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    },
-    {
       "name": "flutter_lints",
       "rootUri": "file:///C:/Users/Mpower/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_lints-3.0.2",
       "packageUri": "lib/",
@@ -70,6 +58,12 @@
     {
       "name": "flutter_test",
       "rootUri": "file:///C:/flutter/packages/flutter_test",
+      "packageUri": "lib/",
+      "languageVersion": "3.9"
+    },
+    {
+      "name": "flutter_web_plugins",
+      "rootUri": "file:///C:/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
       "languageVersion": "3.9"
     },
@@ -140,6 +134,12 @@
       "languageVersion": "3.4"
     },
     {
+      "name": "plugin_platform_interface",
+      "rootUri": "file:///C:/Users/Mpower/AppData/Local/Pub/Cache/hosted/pub.dev/plugin_platform_interface-2.1.8",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "provider",
       "rootUri": "file:///C:/Users/Mpower/AppData/Local/Pub/Cache/hosted/pub.dev/provider-6.1.5+1",
       "packageUri": "lib/",
@@ -194,6 +194,54 @@
       "languageVersion": "3.5"
     },
     {
+      "name": "url_launcher",
+      "rootUri": "file:///C:/Users/Mpower/AppData/Local/Pub/Cache/hosted/pub.dev/url_launcher-6.3.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
+    },
+    {
+      "name": "url_launcher_android",
+      "rootUri": "file:///C:/Users/Mpower/AppData/Local/Pub/Cache/hosted/pub.dev/url_launcher_android-6.3.29",
+      "packageUri": "lib/",
+      "languageVersion": "3.9"
+    },
+    {
+      "name": "url_launcher_ios",
+      "rootUri": "file:///C:/Users/Mpower/AppData/Local/Pub/Cache/hosted/pub.dev/url_launcher_ios-6.4.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.10"
+    },
+    {
+      "name": "url_launcher_linux",
+      "rootUri": "file:///C:/Users/Mpower/AppData/Local/Pub/Cache/hosted/pub.dev/url_launcher_linux-3.2.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.8"
+    },
+    {
+      "name": "url_launcher_macos",
+      "rootUri": "file:///C:/Users/Mpower/AppData/Local/Pub/Cache/hosted/pub.dev/url_launcher_macos-3.2.5",
+      "packageUri": "lib/",
+      "languageVersion": "3.9"
+    },
+    {
+      "name": "url_launcher_platform_interface",
+      "rootUri": "file:///C:/Users/Mpower/AppData/Local/Pub/Cache/hosted/pub.dev/url_launcher_platform_interface-2.3.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.1"
+    },
+    {
+      "name": "url_launcher_web",
+      "rootUri": "file:///C:/Users/Mpower/AppData/Local/Pub/Cache/hosted/pub.dev/url_launcher_web-2.4.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.10"
+    },
+    {
+      "name": "url_launcher_windows",
+      "rootUri": "file:///C:/Users/Mpower/AppData/Local/Pub/Cache/hosted/pub.dev/url_launcher_windows-3.1.5",
+      "packageUri": "lib/",
+      "languageVersion": "3.8"
+    },
+    {
       "name": "vector_math",
       "rootUri": "file:///C:/Users/Mpower/AppData/Local/Pub/Cache/hosted/pub.dev/vector_math-2.2.0",
       "packageUri": "lib/",
@@ -212,13 +260,7 @@
       "languageVersion": "3.3"
     },
     {
-      "name": "web_socket_channel",
-      "rootUri": "file:///C:/Users/Mpower/AppData/Local/Pub/Cache/hosted/pub.dev/web_socket_channel-2.4.5",
-      "packageUri": "lib/",
-      "languageVersion": "3.3"
-    },
-    {
-      "name": "soccer_predictor",
+      "name": "betwiseai",
       "rootUri": "../",
       "packageUri": "lib/",
       "languageVersion": "3.3"

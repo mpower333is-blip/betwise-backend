@@ -1,4 +1,18 @@
-.env
 node_modules/
+backend/node_modules/
+
+# Flutter
+.dart_tool/
 build/
-.DS_Store
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Python
+backend/__pycache__/
+backend/.venv/
+*.pyc
+
+# Secrets
+backend/.env
+.env
+.dart_tool/

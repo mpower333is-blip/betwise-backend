@@ -1,106 +1,71 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import 'providers/betslip_provider.dart';
-
-import 'screens/home_page.dart';
-import 'screens/live_page.dart';
-import 'screens/sports_page.dart';
-import 'screens/betslip_page.dart';
-import 'screens/history_page.dart';
+import 'screens/home_screen.dart';
+import 'screens/picks_screen.dart';
+import 'screens/guides_screen.dart';
+import 'screens/tracker_screen.dart';
+import 'screens/profile_screen.dart';
 
 void main() {
-  runApp(const BetwiseApp());
+  runApp(BetwiseAI());
 }
 
-class BetwiseApp extends StatelessWidget {
-  const BetwiseApp({super.key});
-
+class BetwiseAI extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => BetSlipProvider(),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Betwise Pro',
-        theme: ThemeData(
-          brightness: Brightness.dark,
-          scaffoldBackgroundColor: const Color(0xff03182f),
-          primaryColor: const Color(0xff00ff9d),
-          appBarTheme: const AppBarTheme(
-            backgroundColor: Color(0xff02162c),
-            elevation: 0,
-          ),
-        ),
-        home: const MainShell(),
-      ),
+    return MaterialApp(
+      debugShowCheckedModeBanner:false,
+      title:'BetwiseAI',
+      theme: ThemeData.dark(),
+      home: MainNav(),
     );
   }
 }
 
-class MainShell extends StatefulWidget {
-  const MainShell({super.key});
-
+class MainNav extends StatefulWidget {
   @override
-  State<MainShell> createState() => _MainShellState();
+  State<MainNav> createState()=>_MainNavState();
 }
 
-class _MainShellState extends State<MainShell> {
+class _MainNavState extends State<MainNav>{
+  int index=0;
 
-  int currentIndex = 1;
-
-  final List<Widget> pages = const [
-    HomePage(),
-    LivePage(),
-    SportsPage(),
-    BetslipPage(),
-    HistoryPage(),
+  final pages=[
+    HomeScreen(),
+    PicksScreen(),
+    GuidesScreen(),
+    TrackerScreen(),
+    ProfileScreen()
   ];
 
   @override
-  Widget build(BuildContext context) {
-
+  Widget build(BuildContext context){
     return Scaffold(
-      body: pages[currentIndex],
-
+      body: pages[index],
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
-        backgroundColor: const Color(0xff0a0713),
-        selectedItemColor: const Color(0xff69ffbf),
-        unselectedItemColor: Colors.white54,
-        type: BottomNavigationBarType.fixed,
-
-        onTap: (i){
-          setState(() {
-            currentIndex=i;
-          });
+        currentIndex:index,
+        onTap:(i){
+          setState(()=>index=i);
         },
-
-        items: const [
-
+        items: const[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: "Home",
+            label:"Home"
           ),
-
           BottomNavigationBarItem(
             icon: Icon(Icons.bolt),
-            label: "Live",
+            label:"Picks"
           ),
-
           BottomNavigationBarItem(
-            icon: Icon(Icons.sports_soccer),
-            label: "Sports",
+            icon: Icon(Icons.menu_book),
+            label:"Guides"
           ),
-
           BottomNavigationBarItem(
-            icon: Icon(Icons.receipt_long),
-            label: "Betslip",
+            icon: Icon(Icons.show_chart),
+            label:"Tracker"
           ),
-
           BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: "History",
+            icon: Icon(Icons.person),
+            label:"Profile"
           ),
         ],
       ),

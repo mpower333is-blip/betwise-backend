@@ -1,144 +1,107 @@
 import 'package:flutter/material.dart';
-import 'services/api_service.dart';
+import 'package:provider/provider.dart';
+
+import 'providers/betslip_provider.dart';
+
+import 'screens/home_page.dart';
+import 'screens/live_page.dart';
+import 'screens/sports_page.dart';
+import 'screens/betslip_page.dart';
 import 'screens/history_page.dart';
-import 'screens/dashboard_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const BetwiseApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class BetwiseApp extends StatelessWidget {
+  const BetwiseApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: HomePage(),
-    );
-  }
-}
-
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  List matches = [];
-  List betSlip = [];
-  double stake = 100;
-  double balance = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    loadMatches();
-    loadBalance();
-  }
-
-  Future<void> loadMatches() async {
-    final data = await ApiService.getMatches();
-    setState(() => matches = data);
-  }
-
-  Future<void> loadBalance() async {
-    final b = await ApiService.getBalance();
-    setState(() => balance = b);
-  }
-
-  void addToBetSlip(Map m) {
-    setState(() => betSlip.add(m));
-  }
-
-  double getTotalOdds() {
-    double total = 1;
-    for (var b in betSlip) {
-      total *= (b['odd'] ?? 1).toDouble();
-    }
-    return total;
-  }
-
-  Future<void> placeBet() async {
-    final result = await ApiService.placeBet(betSlip, stake);
-
-    setState(() {
-      balance = result['balance'];
-      betSlip.clear();
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(result['win'] ? "WIN 🎉" : "LOSS ❌"),
+    return ChangeNotifierProvider(
+      create: (_) => BetSlipProvider(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Betwise Pro',
+        theme: ThemeData(
+          brightness: Brightness.dark,
+          scaffoldBackgroundColor: const Color(0xff03182f),
+          primaryColor: const Color(0xff00ff9d),
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Color(0xff02162c),
+            elevation: 0,
+          ),
+        ),
+        home: const MainShell(),
       ),
     );
   }
+}
+
+class MainShell extends StatefulWidget {
+  const MainShell({super.key});
+
+  @override
+  State<MainShell> createState() => _MainShellState();
+}
+
+class _MainShellState extends State<MainShell> {
+
+  int currentIndex = 1;
+
+  final List<Widget> pages = const [
+    HomePage(),
+    LivePage(),
+    SportsPage(),
+    BetslipPage(),
+    HistoryPage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Betwise AI"),
-        actions: [
-          Center(child: Text("💰 ${balance.toStringAsFixed(2)}")),
-          IconButton(
-            icon: const Icon(Icons.history),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const HistoryPage()),
-            ),
+      body: pages[currentIndex],
+
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentIndex,
+        backgroundColor: const Color(0xff0a0713),
+        selectedItemColor: const Color(0xff69ffbf),
+        unselectedItemColor: Colors.white54,
+        type: BottomNavigationBarType.fixed,
+
+        onTap: (i){
+          setState(() {
+            currentIndex=i;
+          });
+        },
+
+        items: const [
+
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: "Home",
           ),
-          IconButton(
-            icon: const Icon(Icons.bar_chart),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const DashboardPage()),
-            ),
+
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bolt),
+            label: "Live",
           ),
-        ],
-      ),
-      body: Row(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: matches.length,
-              itemBuilder: (context, i) {
-                final m = matches[i];
-                return ListTile(
-                  title: Text("${m['home']} vs ${m['away']}"),
-                  subtitle: Text(
-                      "${m['prediction']} (${m['confidence']}%)"),
-                  trailing: Text("${m['odd']}"),
-                  onTap: () => addToBetSlip(m),
-                );
-              },
-            ),
+
+          BottomNavigationBarItem(
+            icon: Icon(Icons.sports_soccer),
+            label: "Sports",
           ),
-          Container(
-            width: 300,
-            color: Colors.black,
-            child: Column(
-              children: [
-                const Text("Bet Slip"),
-                Expanded(
-                  child: ListView(
-                    children: betSlip.map((b) => ListTile(
-                      title: Text("${b['home']} vs ${b['away']}"),
-                      trailing: Text("${b['odd']}"),
-                    )).toList(),
-                  ),
-                ),
-                Text("Odds: ${getTotalOdds().toStringAsFixed(2)}"),
-                Text("Payout: ${(getTotalOdds()*stake).toStringAsFixed(2)}"),
-                ElevatedButton(
-                  onPressed: placeBet,
-                  child: const Text("Place Bet"),
-                )
-              ],
-            ),
-          )
+
+          BottomNavigationBarItem(
+            icon: Icon(Icons.receipt_long),
+            label: "Betslip",
+          ),
+
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            label: "History",
+          ),
         ],
       ),
     );

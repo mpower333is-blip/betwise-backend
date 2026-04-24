@@ -124,7 +124,7 @@ app.post("/bet", (req, res) => {
     }
 
     const totalOdds = bets.reduce(
-      (acc, b) => acc * Number(b.odd || 1),
+      (acc, b) => acc * Number(b.odds || 1),
       1
     );
 
